@@ -8,12 +8,17 @@ import pages.GoogleSearchHomePage;
 import utils.Urls;
 import utils.WebDriverUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * Tests the flow: search for url under test (branch.io), click that url
  * Scrolls the page down till found team link
  */
 public class BranchTeamTest {
-    public static final String EXPECTED_URL = "https://branch.io/";
+    private static final Logger LOGGER = Logger.getLogger(BranchTeamTest.class.getName());
     private static WebDriver driver;
 
     /**
@@ -26,12 +31,41 @@ public class BranchTeamTest {
     }
 
     @Test
-    public void compareTotalEmployeesNumberTest() throws InterruptedException {
+    public void compareTotalEmployeesNumberTest() {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
         int employeesFromAllTab = teamPage.getEmployeesFromAllTab();
         int employeesFromOtherTabs = teamPage.getEmployeesInOtherDepartments();
         Assert.assertEquals("The number of employees from All tab does not match with the total number from other tabs",
                 employeesFromAllTab, employeesFromOtherTabs);
+    }
+
+    @Test
+    public void compareTotalEmployeesNamesTest() {
+        BranchTeamPage teamPage = searchAndNavigateToTeamPage();
+        ArrayList<String> employeesNamesFromAllTab = teamPage.getEmployeesNamesFromAllTab();
+        ArrayList<String> employeesNamesFromOtherTab = teamPage.getEmployeesNamesFromOthersTabs();
+        Assert.assertTrue("The names of employees from All tab does not match with the names from other tabs",
+                verifyEmployeesMatching(employeesNamesFromAllTab, employeesNamesFromOtherTab));
+    }
+
+    private boolean verifyEmployeesMatching(ArrayList<String> all, ArrayList<String> others) {
+        Map<String,Integer> map = new HashMap<>();
+        boolean hasMatch = true;
+        for (String employeeName : all) {
+            if (!map.containsKey(employeeName)) map.put(employeeName, 1);
+        }
+        for (String employeeName : others) {
+            if (map.containsKey(employeeName)) map.put(employeeName, map.get(employeeName) + 1);
+        }
+        for (String employee : map.keySet()) {
+            if (map.get(employee) > 1) {
+            }
+            else {
+                hasMatch = false;
+                LOGGER.info("The employees was not found: " + employee);
+            }
+        }
+        return hasMatch;
     }
 
     /**

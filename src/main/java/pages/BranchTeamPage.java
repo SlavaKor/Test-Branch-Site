@@ -38,12 +38,29 @@ public class BranchTeamPage extends BasePage {
         return allEmployeesShownInPage.size();
     }
 
-    public ArrayList<String> getAllEmployeesNames() {
+    /**
+     * Get employees names from All tab.
+     * Explicitly clicking the first tab to make sure it is selected.
+     * @return {@link ArrayList<String>} - list of employees names
+     */
+    public ArrayList<String> getEmployeesNamesFromAllTab() {
         ArrayList<String> listOfNames = new ArrayList<>();
         departmentsTabs.get(0).click();
         for (int i = 0; i < allEmployeesNamesShownInPage.size(); i++) {
             listOfNames.add(allEmployeesNamesShownInPage.get(i).getText());
             LOGGER.info("Name "+ i + " - " + listOfNames.get(i));
+        }
+        return listOfNames;
+    }
+
+    public ArrayList<String> getEmployeesNamesFromOthersTabs() {
+        ArrayList<String> listOfNames = new ArrayList<>();
+        for (int i = 1; i < departmentsTabs.size(); i++) {
+            departmentsTabs.get(i).click();
+            for (int j = 0; j < allEmployeesNamesShownInPage.size(); j++) {
+                listOfNames.add(allEmployeesNamesShownInPage.get(j).getText());
+                LOGGER.info("Employees in " + departmentsTabs.get(i).getText() +  " - " + listOfNames.get(j));
+            }
         }
         return listOfNames;
     }
