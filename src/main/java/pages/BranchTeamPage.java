@@ -7,6 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import utils.WaitUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,10 @@ import java.util.List;
  */
 public class BranchTeamPage extends BasePage {
     @FindBy(xpath = "//div[@class='row row-centered']/div[@style='display: inline-block;']")
-    private List<WebElement> allEmployeesShowInPage;
+    private List<WebElement> allEmployeesShownInPage;
+
+    @FindBy(xpath = "//div[@class='row row-centered']/div[@style='display: inline-block;']//h2")
+    private List<WebElement> allEmployeesNamesShownInPage;
 
     @FindBy(xpath = "//ul[@class='team-categories']/li")
     private List<WebElement> departmentsTabs;
@@ -29,9 +33,19 @@ public class BranchTeamPage extends BasePage {
      *
      * @return {@link int} - total number of employees in first "All" tab.
      */
-    public int getAllEmployees() {
+    public int getEmployeesFromAllTab() {
         departmentsTabs.get(0).click();
-        return allEmployeesShowInPage.size();
+        return allEmployeesShownInPage.size();
+    }
+
+    public ArrayList<String> getAllEmployeesNames() {
+        ArrayList<String> listOfNames = new ArrayList<>();
+        departmentsTabs.get(0).click();
+        for (int i = 0; i < allEmployeesNamesShownInPage.size(); i++) {
+            listOfNames.add(allEmployeesNamesShownInPage.get(i).getText());
+            LOGGER.info("Name "+ i + " - " + listOfNames.get(i));
+        }
+        return listOfNames;
     }
 
     /**
@@ -47,7 +61,7 @@ public class BranchTeamPage extends BasePage {
         int total = 0;
         for (int i = 1; i < departmentsTabs.size(); i++) {
             departmentsTabs.get(i).click();
-            employeesInCurrentDep = allEmployeesShowInPage.size();
+            employeesInCurrentDep = allEmployeesShownInPage.size();
             LOGGER.info("Employees in " + departmentsTabs.get(i).getText() + " - " + employeesInCurrentDep);
             total = total + employeesInCurrentDep;
         }

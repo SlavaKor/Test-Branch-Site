@@ -28,7 +28,7 @@ public class BranchTeamTest {
     @Test
     public void compareTotalEmployeesNumberTest() throws InterruptedException {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
-        int employeesFromAllTab = teamPage.getAllEmployees();
+        int employeesFromAllTab = teamPage.getEmployeesFromAllTab();
         int employeesFromOtherTabs = teamPage.getEmployeesInOtherDepartments();
         Assert.assertEquals("The number of employees from All tab does not match with the total number from other tabs",
                 employeesFromAllTab, employeesFromOtherTabs);
