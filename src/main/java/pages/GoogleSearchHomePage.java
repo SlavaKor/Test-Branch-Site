@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class GoogleSearchHomePage extends BasePage {
     private static final Logger LOGGER = Logger.getLogger(GoogleSearchHomePage.class.getName());
 
-    @FindBy(id = "lst-ib")
+    @FindBy(xpath = "//input[@title='Search']")
     private WebElement searchInput;
 
     @FindBy(xpath = "//input[@value='Google Search']")
@@ -40,7 +40,8 @@ public class GoogleSearchHomePage extends BasePage {
 
     @Override
     protected void waitThePageToLoad() {
-        WaitUtils.waitUntil(driver, ExpectedConditions.visibilityOf(driver.findElement(By.id("lst-ib"))));
+        WaitUtils.waitUntil(driver, ExpectedConditions.visibilityOf(driver
+                .findElement(By.xpath("//input[@title='Search']"))));
     }
 }
 
