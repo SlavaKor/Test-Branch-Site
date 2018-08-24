@@ -2,7 +2,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import pages.BranchTeamPage;
 import pages.GoogleSearchHomePage;
 import utils.Urls;
@@ -10,6 +12,7 @@ import utils.WebDriverUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -33,8 +36,10 @@ public class BranchTeamTest {
     @Test
     public void compareTotalEmployeesNumberTest() {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
-        int employeesFromAllTab = teamPage.getEmployeesFromAllTab();
+
+        int employeesFromAllTab = teamPage.getEmployeesNumberFromAllTab();
         int employeesFromOtherTabs = teamPage.getEmployeesInOtherDepartments();
+
         Assert.assertEquals("The number of employees from All tab does not match with the total number from other tabs",
                 employeesFromAllTab, employeesFromOtherTabs);
     }
@@ -44,10 +49,49 @@ public class BranchTeamTest {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
         ArrayList<String> employeesNamesFromAllTab = teamPage.getEmployeesNamesFromAllTab();
         ArrayList<String> employeesNamesFromOtherTab = teamPage.getEmployeesNamesFromOthersTabs();
+
         Assert.assertTrue("The names of employees from All tab does not match with the names from other tabs",
                 verifyEmployeesMatching(employeesNamesFromAllTab, employeesNamesFromOtherTab));
     }
 
+    @Test
+    public void compareEmployeesDepartmentTest() throws InterruptedException {
+        BranchTeamPage teamPage = searchAndNavigateToTeamPage();
+
+        Map<String, String> map = teamPage.getEmpWithDep();
+        List<WebElement> departments = teamPage.getDepartments();
+        String currentName;
+        String currentDep;
+
+        //go to each department except first and get every name and corresponding department
+        for (int i = 1; i < departments.size(); i++) {
+            departments.get(i).click();
+            for (WebElement name : teamPage.getEmployeesNamesShownInPage()) {
+                currentName = name.getText();
+                currentDep = teamPage.getEmployeeByName(currentName)
+                        .findElement(By.xpath("following-sibling::h4")).getText();
+                //compare current department for every employee with what we have in "all" map
+                if (map.containsKey(currentName)){
+                    Assert.assertEquals(name.getText() + " has incorrect department",
+                            map.get(currentName), currentDep);
+                }
+                else {
+                    LOGGER.info("Employee -" + name.getText() + " is not present in All tab");
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Method loop through "all" array and add every name to the map with counter 1.
+     * Then loop though "others" array and increment the counter if names already exist in map.
+     * Finally check name's counters if any hasn't incremented, it means the matching name wasn't found.
+     * Log the names without match.
+     * @param all - list of employees from all tab
+     * @param others - list of employees from others tabs
+     * @return {@link boolean} - returns true if all names are matching.
+     */
     private boolean verifyEmployeesMatching(ArrayList<String> all, ArrayList<String> others) {
         Map<String,Integer> map = new HashMap<>();
         boolean hasMatch = true;
