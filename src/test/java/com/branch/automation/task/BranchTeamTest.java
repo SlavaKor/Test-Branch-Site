@@ -1,3 +1,9 @@
+package com.branch.automation.task;
+
+import com.branch.automation.task.pages.BranchTeamPage;
+import com.branch.automation.task.pages.GoogleSearchHomePage;
+import com.branch.automation.task.utils.Urls;
+import com.branch.automation.task.utils.WebDriverUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -5,12 +11,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import pages.BranchTeamPage;
-import pages.GoogleSearchHomePage;
-import utils.Urls;
-import utils.WebDriverUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,8 @@ public class BranchTeamTest {
     @Test
     public void compareTotalEmployeesNamesTest() {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
-        ArrayList<String> employeesNamesFromAllTab = teamPage.getEmployeesNamesFromAllTab();
-        ArrayList<String> employeesNamesFromOtherTab = teamPage.getEmployeesNamesFromOthersTabs();
+        List<String> employeesNamesFromAllTab = teamPage.getEmployeesNamesFromAllTab();
+        List<String> employeesNamesFromOtherTab = teamPage.getEmployeesNamesFromOthersTabs();
 
         Assert.assertTrue("The names of employees from All tab does not match with the names from other tabs",
                 verifyEmployeesMatching(employeesNamesFromAllTab, employeesNamesFromOtherTab));
@@ -92,7 +93,7 @@ public class BranchTeamTest {
      * @param others - list of employees from others tabs
      * @return {@link boolean} - returns true if all names are matching.
      */
-    private boolean verifyEmployeesMatching(ArrayList<String> all, ArrayList<String> others) {
+    private boolean verifyEmployeesMatching(List<String> all, List<String> others) {
         Map<String,Integer> map = new HashMap<>();
         boolean hasMatch = true;
         for (String employeeName : all) {

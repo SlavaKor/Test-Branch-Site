@@ -1,11 +1,11 @@
-package pages;
+package com.branch.automation.task.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import utils.WaitUtils;
+import com.branch.automation.task.utils.WaitUtils;
 
 import java.util.logging.Logger;
 
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class GoogleSearchHomePage extends BasePage {
     private static final Logger LOGGER = Logger.getLogger(GoogleSearchHomePage.class.getName());
-
+    private static final String SEARCH_XPATH = "//input[@title='Search']";
     @FindBy(xpath = "//input[@title='Search']")
     private WebElement searchInput;
 
@@ -38,10 +38,13 @@ public class GoogleSearchHomePage extends BasePage {
         return new GoogleSearchResultPage(driver);
     }
 
+    /**
+     * Override this wait method to wait for the slow loading element on the page
+     */
     @Override
     protected void waitThePageToLoad() {
         WaitUtils.waitUntil(driver, ExpectedConditions.visibilityOf(driver
-                .findElement(By.xpath("//input[@title='Search']"))));
+                .findElement(By.xpath(SEARCH_XPATH))));
     }
 }
 

@@ -1,4 +1,4 @@
-package utils;
+package com.branch.automation.task.utils;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -6,9 +6,12 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
- * Expected conditions to wait for the pages to load
+ * Expected conditions to wait for the com.branch.automation.task.pages to load
  */
 public class WaitUtils {
+    private WaitUtils() {
+    }
+
     private final static long TIMEOUT = 30;
 
     /**

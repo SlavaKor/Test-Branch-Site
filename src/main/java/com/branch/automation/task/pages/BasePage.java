@@ -1,14 +1,14 @@
-package pages;
+package com.branch.automation.task.pages;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import utils.WaitUtils;
+import com.branch.automation.task.utils.WaitUtils;
 
 /**
- * Parent class for pages. Has all necessary functionality for new page.
+ * Parent class for com.branch.automation.task.pages. Has all necessary functionality for new page.
  * Uses constructor with wait and Page Factory init method.
  * Each new page should extend this class
  */

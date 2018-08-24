@@ -1,11 +1,11 @@
-package pages;
+package com.branch.automation.task.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import utils.WaitUtils;
+import com.branch.automation.task.utils.WaitUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,9 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Describes Branch Team page
+ * Describes state and behavior of Branch Team page
  */
 public class BranchTeamPage extends BasePage {
+    private static final String BY_NAME_XPATH = "//div[@class='row row-centered']" +
+            "/div[@style='display: inline-block;']//h2[contains(text(),'%s')]";
+    private static final String DEPARTMENT_XPATH = "following-sibling::h4";
+    private static final String TEAM_CATEGORIES_XPATH = "//ul[@class='team-categories']/li";
+
     @FindBy(xpath = "//div[@class='row row-centered']/div[@style='display: inline-block;']")
     private List<WebElement> allEmployeesShownInPage;
 
@@ -59,19 +64,37 @@ public class BranchTeamPage extends BasePage {
         return allEmployeesShownInPage;
     }
 
+    /**
+     * Get list of all departments
+     * @return {@link} list of departments web elements
+     */
     public List<WebElement> getDepartments() {
         return departmentsTabs;
     }
 
+    /**
+     * Get web element with specified employee name
+     * As names are returned in uppercase, it has to be converted in
+     * regular view used in xpath
+     * @param fullName {@link String} employee full name
+     * @return {@WebElement} - returns web element for selected name
+     */
     public WebElement getEmployeeByName(String fullName) {
         fullName = toUpperCaseFirstLetter(fullName);
-            return driver.findElement(By.xpath(String.format("//div[@class='row row-centered']/" +
-                    "div[@style='display: inline-block;']//h2[contains(text(),'%s')]", fullName)));
+        return driver.findElement(By.xpath(String.format(BY_NAME_XPATH, fullName)));
     }
 
+    /**
+     * I KNOW :))) this actually converts upper-case names to normal view
+     * just with couple hardcoded exceptions, sorry for that :(.
+     * If I have time I will change it to make xpath case insensitive
+     * as it didn't work with solutions I found so far :((
+     * @param fullName {@link String} employee's name
+     * @return {@link String} eployee's name in lower-case format this first letter in upper-case
+     */
     public String toUpperCaseFirstLetter(String fullName) {
         if (fullName.equals("PATRICK VAN DER STEEN")) return "Patrick van der Steen"; // sorry for hardcode
-        if (fullName.equals("PETER LABERGE")) return "Peter LaBerge"; // just xpath case sencetive
+        if (fullName.equals("PETER LABERGE")) return "Peter LaBerge"; // just xpath case sensitive
         if (fullName.equals("SOJAN PR")) return "Sojan PR";
         String result = "";
         String[] splitName = fullName.split(" ");
@@ -90,10 +113,10 @@ public class BranchTeamPage extends BasePage {
     /**
      * Get employees names from All tab.
      * Explicitly clicking the first tab to make sure it is selected.
-     * @return {@link ArrayList<String>} - list of employees names
+     * @return {@link List<String>} - list of employees names
      */
-    public ArrayList<String> getEmployeesNamesFromAllTab() {
-        ArrayList<String> listOfNames = new ArrayList<>();
+    public List<String> getEmployeesNamesFromAllTab() {
+        List<String> listOfNames = new ArrayList<>();
         departmentsTabs.get(0).click();
         for (int i = 0; i < allEmployeesNamesShownInPage.size(); i++) {
             listOfNames.add(allEmployeesNamesShownInPage.get(i).getText());
@@ -104,10 +127,10 @@ public class BranchTeamPage extends BasePage {
     /**
      * Get employees names from current tab.
      * Explicitly clicking the exact tab for it.
-     * @return {@link ArrayList<String>} - list of employees names
+     * @return {@link List<String>} - list of employees names
      */
-    public ArrayList<String> getEmployeesNamesFromCurrentTab(int current) {
-        ArrayList<String> listOfNames = new ArrayList<>();
+    public List<String> getEmployeesNamesFromCurrentTab(int current) {
+        List<String> listOfNames = new ArrayList<>();
         departmentsTabs.get(current).click();
         for (int i = 0; i < allEmployeesNamesShownInPage.size(); i++) {
             listOfNames.add(allEmployeesNamesShownInPage.get(i).getText());
@@ -115,8 +138,12 @@ public class BranchTeamPage extends BasePage {
         return listOfNames;
     }
 
-    public ArrayList<String> getEmployeesNamesFromOthersTabs() {
-        ArrayList<String> listOfNames = new ArrayList<>();
+    /**
+     * Navigates to each tab and collects employees' names
+     * @return list of employees names
+     */
+    public List<String> getEmployeesNamesFromOthersTabs() {
+        List<String> listOfNames = new ArrayList<>();
         for (int i = 1; i < departmentsTabs.size(); i++) {
             departmentsTabs.get(i).click();
             for (int j = 0; j < allEmployeesNamesShownInPage.size(); j++) {
@@ -127,6 +154,10 @@ public class BranchTeamPage extends BasePage {
         return listOfNames;
     }
 
+    /**
+     * Get list of web elements of employees names shown in the current tab
+     * @return - list of employees names
+     */
     public List<WebElement> getAllEmployeesNamesShownInPage() {
         return allEmployeesNamesShownInPage;
     }
@@ -159,7 +190,7 @@ public class BranchTeamPage extends BasePage {
     public Map<String, String> getEmpWithDep() {
         Map<String, String> map = new HashMap<>();
         for (String name : getEmployeesNamesFromAllTab()) {
-            String dep = getEmployeeByName(name).findElement(By.xpath("following-sibling::h4")).getText();
+            String dep = getEmployeeByName(name).findElement(By.xpath(DEPARTMENT_XPATH)).getText();
             if (!map.containsKey(name)) {
                 map.put(name, dep);
             }
@@ -171,9 +202,12 @@ public class BranchTeamPage extends BasePage {
         return map;
     }
 
+    /**
+     * Override this wait method to wait for the slow loading element on the page
+     */
     @Override
     protected void waitThePageToLoad() {
         WaitUtils.waitUntil(driver, ExpectedConditions.visibilityOf(driver
-                .findElement(By.xpath("//ul[@class='team-categories']/li"))));
+                .findElement(By.xpath(TEAM_CATEGORIES_XPATH))));
     }
 }

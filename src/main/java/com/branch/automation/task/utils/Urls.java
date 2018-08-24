@@ -1,4 +1,4 @@
-package utils;
+package com.branch.automation.task.utils;
 
 /**
  * Stores link to the Home page
