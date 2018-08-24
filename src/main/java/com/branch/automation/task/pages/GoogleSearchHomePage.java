@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 public class GoogleSearchHomePage extends BasePage {
     private static final Logger LOGGER = Logger.getLogger(GoogleSearchHomePage.class.getName());
     private static final String SEARCH_XPATH = "//input[@title='Search']";
+
     @FindBy(xpath = "//input[@title='Search']")
     private WebElement searchInput;
 

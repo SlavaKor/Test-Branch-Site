@@ -21,8 +21,8 @@ import java.util.logging.Logger;
  * Tests the flow: search for url under test (branch.io), click that url
  * Scrolls the page down till found team link
  */
-public class BranchTeamTest {
-    private static final Logger LOGGER = Logger.getLogger(BranchTeamTest.class.getName());
+public class BranchTeamTests {
+    private static final Logger LOGGER = Logger.getLogger(BranchTeamTests.class.getName());
     private static WebDriver driver;
 
     /**
