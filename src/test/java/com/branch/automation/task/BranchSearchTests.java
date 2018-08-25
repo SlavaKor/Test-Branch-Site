@@ -1,8 +1,8 @@
 package com.branch.automation.task;
 
+import com.branch.automation.task.data.Urls;
 import com.branch.automation.task.pages.BranchHomePage;
 import com.branch.automation.task.pages.WebinarPage;
-import com.branch.automation.task.utils.Urls;
 import com.branch.automation.task.utils.WebDriverUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -31,7 +31,7 @@ public class BranchSearchTests {
     @Before
     public void init() {
         driver = WebDriverUtils.initDriver();
-        WebDriverUtils.navigateToURL(driver, Urls.BRANCH_HOME);
+        WebDriverUtils.navigateToURL(driver, Urls.BRANCH_IO.getUrl());
     }
 
     @Test

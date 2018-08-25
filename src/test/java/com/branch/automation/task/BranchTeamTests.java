@@ -1,8 +1,8 @@
 package com.branch.automation.task;
 
+import com.branch.automation.task.data.Urls;
 import com.branch.automation.task.pages.BranchTeamPage;
 import com.branch.automation.task.pages.GoogleSearchHomePage;
-import com.branch.automation.task.utils.Urls;
 import com.branch.automation.task.utils.WebDriverUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -31,13 +31,12 @@ public class BranchTeamTests {
     @Before
     public void init() {
         driver = WebDriverUtils.initDriver();
-        WebDriverUtils.navigateToURL(driver, Urls.GOOGLE_SEARCH);
+        WebDriverUtils.navigateToURL(driver, Urls.GOOGLE_SEARCH.getUrl());
     }
 
     @Test
     public void compareTotalEmployeesNumberTest() {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
-
         int employeesFromAllTab = teamPage.getEmployeesNumberFromAllTab();
         int employeesFromOtherTabs = teamPage.getEmployeesInOtherDepartments();
 
@@ -51,8 +50,8 @@ public class BranchTeamTests {
         List<String> employeesNamesFromAllTab = teamPage.getEmployeesNamesFromAllTab();
         List<String> employeesNamesFromOtherTab = teamPage.getEmployeesNamesFromOthersTabs();
 
-        Assert.assertTrue("The names of employees from All tab does not match with the names from other tabs",
-                verifyEmployeesMatching(employeesNamesFromAllTab, employeesNamesFromOtherTab));
+        Assert.assertEquals("The names of employees from All tab does not match with the names from other tabs",
+                employeesNamesFromAllTab, employeesNamesFromOtherTab);
     }
 
     @Test
@@ -87,7 +86,7 @@ public class BranchTeamTests {
     /**
      * Method loop through "all" array and add every name to the map with counter 1.
      * Then loop though "others" array and increment the counter if names already exist in map.
-     * Finally check name's counters if any hasn't incremented, it means the matching name wasn't found.
+     * Finally check name's counters if any less than 2, it means the matching name wasn't found.
      * Log the names without match.
      * @param all - list of employees from all tab
      * @param others - list of employees from others tabs
@@ -103,9 +102,7 @@ public class BranchTeamTests {
             if (map.containsKey(employeeName)) map.put(employeeName, map.get(employeeName) + 1);
         }
         for (String employee : map.keySet()) {
-            if (map.get(employee) > 1) {
-            }
-            else {
+            if (map.get(employee) < 2) {
                 hasMatch = false;
                 LOGGER.info("The employees was not found: " + employee);
             }
@@ -121,7 +118,7 @@ public class BranchTeamTests {
      */
     private BranchTeamPage searchAndNavigateToTeamPage() {
         return new GoogleSearchHomePage(driver)
-                .searchFor(Urls.BRANCH_HOME)
+                .searchFor(Urls.BRANCH_IO.getUrl())
                 .goToBranchHomePage()
                 .goToTeamPage();
     }
