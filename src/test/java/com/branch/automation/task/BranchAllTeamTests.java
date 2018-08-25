@@ -44,7 +44,6 @@ public class BranchAllTeamTests {
     @Test
     public void compareTotalEmployeesNamesTest() {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
-        teamPage.getEmpWithDepFromDepartments(); // -----deleteit
         Assert.assertEquals("The names of employees from All tab do not match with total names from departments",
                 teamPage.getEmployeesNamesFromAllTab(), teamPage.getEmployeesNamesFromOthersTabs());
     }
