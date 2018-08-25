@@ -8,9 +8,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +37,6 @@ public class BranchAllTeamTests {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
         int employeesFromAllTab = teamPage.getEmployeesNumberFromAllTab();
         int employeesFromOtherTabs = teamPage.getEmployeesInOtherDepartments();
-
         Assert.assertEquals("The number of employees from All tab does not match with the total number from other tabs",
                 employeesFromAllTab, employeesFromOtherTabs);
     }
@@ -47,6 +44,7 @@ public class BranchAllTeamTests {
     @Test
     public void compareTotalEmployeesNamesTest() {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
+        teamPage.getEmpWithDepFromDepartments(); // -----deleteit
         Assert.assertEquals("The names of employees from All tab do not match with total names from departments",
                 teamPage.getEmployeesNamesFromAllTab(), teamPage.getEmployeesNamesFromOthersTabs());
     }
@@ -63,35 +61,37 @@ public class BranchAllTeamTests {
     @Test
     public void compareEmployeesDepartmentTest() throws InterruptedException {
         BranchTeamPage teamPage = searchAndNavigateToTeamPage();
+        Map<String, String> empWithDepFromAll = teamPage.getEmpWithDepFromAll();
+        Map<String, String> empWithDepFromDepartments = teamPage.getEmpWithDepFromDepartments();
+        verifyEmployeeDepartmentMatchesBetweenTabs(empWithDepFromAll, empWithDepFromDepartments);
+    }
 
-        Map<String, String> map = teamPage.getEmpWithDep();
-        List<WebElement> departments = teamPage.getDepartments();
-        String currentName;
-        String currentDep;
 
-        //go to each department except first and get every name and corresponding department
-        for (int i = 1; i < departments.size(); i++) {
-            departments.get(i).click();
-            for (WebElement name : teamPage.getEmployeesNamesShownInPage()) {
-                currentName = name.getAttribute("textContent");
-                currentDep = teamPage.getEmployeeByName(currentName)
-                        .findElement(By.xpath("following-sibling::h4")).getText();
-                //compare current department for every employee with what we have in "all" map
-                if (map.containsKey(currentName)){
-                    Assert.assertEquals(name.getText() + " has incorrect department",
-                            map.get(currentName), currentDep);
-                }
-                else {
-                    LOGGER.info("Employee -" + name.getText() + " is not present in All tab");
-                }
+    /**
+     * Verifies if employees department shown in profile in department tab is the same as
+     * one shown in profile in all tab
+     * This test pass if all tab has extra profiles
+     * @param empWithDepFromAll - employees with departments from all page
+     * @param empWithDepFromDepartments - employees with departments from all page
+     */
+    private void verifyEmployeeDepartmentMatchesBetweenTabs(Map<String, String> empWithDepFromAll,
+                                                               Map<String, String> empWithDepFromDepartments) {
+        for (String currentName : empWithDepFromDepartments.keySet()) {
+            //compare current department for every employee with what we have in "all" map
+            if (empWithDepFromAll.containsKey(currentName)) {
+                Assert.assertEquals(currentName + " has incorrect department",
+                        empWithDepFromAll.get(currentName), empWithDepFromDepartments.get(currentName));
             }
-
+            else {
+                Assert.assertTrue("The employee is not present in All tab", empWithDepFromAll.containsKey(currentName));
+                LOGGER.info("Employee -" + currentName + " is not present in All tab");
+            }
         }
     }
 
     /**
      * Add names from all to map, then check if names from departments are present in the map.
-     * This test pass if map has extra names, but fails if departments have extra names
+     * This test pass if map has extra names, but fails if departments have extra ones.
      * Log extra names.
      * @param namesFromAll - list of employees from all tab
      * @param namesFromDeps - list of employees from others tabs

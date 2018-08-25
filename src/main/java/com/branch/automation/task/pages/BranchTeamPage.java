@@ -157,11 +157,11 @@ public class BranchTeamPage extends BasePage {
     }
 
     /**
-     * Put every employee in map to create corresponding pair: name -> department
+     * Put every employee from "All" in map to create corresponding pair: name -> department
      * The map will be used in testing departments matching
      * @return {@link Map<String, String>} employee name with corresponding department
      */
-    public Map<String, String> getEmpWithDep() {
+    public Map<String, String> getEmpWithDepFromAll() {
         Map<String, String> map = new HashMap<>();
         for (String name : getEmployeesNamesFromAllTab()) {
             String dep = getEmployeeByName(name).findElement(By.xpath(DEPARTMENT_XPATH)).getText();
@@ -169,7 +169,34 @@ public class BranchTeamPage extends BasePage {
                 map.put(name, dep);
             }
         }
-        LOGGER.info("Number of pair: employees - department added to map: " + map.size());
+        LOGGER.info("Number of pair: employees - department added to All map: " + map.size());
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            LOGGER.info(entry.getKey() + ": " + entry.getValue());
+        }
+        return map;
+    }
+
+    /**
+     * Put every employee from departments tab in map to create corresponding pair: name -> department
+     * The map will be used in testing departments matching
+     * @return {@link Map<String, String>} employee name with corresponding department
+     */
+    public Map<String, String> getEmpWithDepFromDepartments() {
+        Map<String, String> map = new HashMap<>();
+        List<WebElement> departments = getDepartments();
+        String currentName;
+        String currentDepartment;
+        //go to each department and get every name and current department
+        for (int i = 1; i < departments.size(); i++) {
+            departments.get(i).click();
+            for (WebElement name : getEmployeesNamesShownInPage()) {
+                currentName = name.getAttribute("textContent");
+                currentDepartment = getEmployeeByName(currentName).findElement(By.xpath(DEPARTMENT_XPATH)).getText();
+                if (!map.containsKey(currentName)) {
+                    map.put(currentName, currentDepartment);
+                }
+            }
+        }
         for (Map.Entry<String, String> entry : map.entrySet()) {
             LOGGER.info(entry.getKey() + ": " + entry.getValue());
         }
