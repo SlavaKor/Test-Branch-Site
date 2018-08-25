@@ -17,7 +17,8 @@ import java.util.Map;
  */
 public class BranchTeamPage extends BasePage {
     private static final String BY_NAME_XPATH = "//div[@class='row row-centered']" +
-            "/div[@style='display: inline-block;']//h2[contains(text(),'%s')]";
+            "/div[@style='display: inline-block;']" +
+            "//h2[contains(text(),'%s')]";
     private static final String DEPARTMENT_XPATH = "following-sibling::h4";
     private static final String TEAM_CATEGORIES_XPATH = "//ul[@class='team-categories']/li";
 
@@ -80,34 +81,7 @@ public class BranchTeamPage extends BasePage {
      * @return {@WebElement} - returns web element for selected name
      */
     public WebElement getEmployeeByName(String fullName) {
-        fullName = toUpperCaseFirstLetter(fullName);
         return driver.findElement(By.xpath(String.format(BY_NAME_XPATH, fullName)));
-    }
-
-    /**
-     * I KNOW :))) this actually converts upper-case names to normal view
-     * just with couple hardcoded exceptions, sorry for that :(.
-     * If I have time I will change it to make xpath case insensitive
-     * as it didn't work with solutions I found so far :((
-     * @param fullName {@link String} employee's name
-     * @return {@link String} eployee's name in lower-case format this first letter in upper-case
-     */
-    public String toUpperCaseFirstLetter(String fullName) {
-        if (fullName.equals("PATRICK VAN DER STEEN")) return "Patrick van der Steen"; // sorry for hardcode
-        if (fullName.equals("PETER LABERGE")) return "Peter LaBerge"; // just xpath case sensitive
-        if (fullName.equals("SOJAN PR")) return "Sojan PR";
-        String result = "";
-        String[] splitName = fullName.split(" ");
-        for (int i = 0; i < splitName.length; i++) {
-            char[] lowered = splitName[i].toLowerCase().toCharArray();
-            for (int j = 0; j < lowered.length - 1; j++) {
-                if (!Character.isLetter(lowered[j])) lowered[j + 1] = Character.toUpperCase(lowered[j + 1]);
-                else lowered[0] = Character.toUpperCase(lowered[0]);
-            }
-            if (i < splitName.length - 1) result = result + new String(lowered) + " ";
-                else result = result + new String(lowered);
-        }
-        return result;
     }
 
     /**
@@ -119,7 +93,7 @@ public class BranchTeamPage extends BasePage {
         List<String> listOfNames = new ArrayList<>();
         departmentsTabs.get(0).click();
         for (int i = 0; i < allEmployeesNamesShownInPage.size(); i++) {
-            listOfNames.add(allEmployeesNamesShownInPage.get(i).getText());
+            listOfNames.add(allEmployeesNamesShownInPage.get(i).getAttribute("textContent"));
         }
         return listOfNames;
     }
@@ -133,7 +107,7 @@ public class BranchTeamPage extends BasePage {
         List<String> listOfNames = new ArrayList<>();
         departmentsTabs.get(current).click();
         for (int i = 0; i < allEmployeesNamesShownInPage.size(); i++) {
-            listOfNames.add(allEmployeesNamesShownInPage.get(i).getText());
+            listOfNames.add(allEmployeesNamesShownInPage.get(i).getAttribute("textContent"));
         }
         return listOfNames;
     }
@@ -147,7 +121,7 @@ public class BranchTeamPage extends BasePage {
         for (int i = 1; i < departmentsTabs.size(); i++) {
             departmentsTabs.get(i).click();
             for (int j = 0; j < allEmployeesNamesShownInPage.size(); j++) {
-                listOfNames.add(allEmployeesNamesShownInPage.get(j).getText());
+                listOfNames.add(allEmployeesNamesShownInPage.get(j).getAttribute("textContent")); // to lower names
                 LOGGER.info("Employees in " + departmentsTabs.get(i).getText() +  " - " + listOfNames.get(j));
             }
         }
@@ -197,7 +171,7 @@ public class BranchTeamPage extends BasePage {
         }
         LOGGER.info("Number of pair: employees - department added to map: " + map.size());
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            LOGGER.info(entry.getKey() + ":" + entry.getValue());
+            LOGGER.info(entry.getKey() + ": " + entry.getValue());
         }
         return map;
     }

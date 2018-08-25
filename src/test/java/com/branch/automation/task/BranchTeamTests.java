@@ -68,7 +68,7 @@ public class BranchTeamTests {
         for (int i = 1; i < departments.size(); i++) {
             departments.get(i).click();
             for (WebElement name : teamPage.getEmployeesNamesShownInPage()) {
-                currentName = name.getText();
+                currentName = name.getAttribute("textContent");
                 currentDep = teamPage.getEmployeeByName(currentName)
                         .findElement(By.xpath("following-sibling::h4")).getText();
                 //compare current department for every employee with what we have in "all" map
