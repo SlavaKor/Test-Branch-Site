@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
 /**
  * Created by Slava on 8/24/18.
  */
-public class BranchSearchTests {
+public class BranchSearchTest {
     private static final String RESOURCES_TITLE = "Branch Resource Hub";
     private static final String FIRST_NAME = "Iaroslava";
     private static final String LAST_NAME = "Kornachevska";
@@ -52,7 +52,7 @@ public class BranchSearchTests {
 
     // Intentionally making this test fail by leaving required company input filed empty
     @Test
-    public void fillOutWebinarFormTestShouldFail() {
+    public void fillOutWebinarFormShouldFailTest() {
         WebinarPage webinarPage = new BranchHomePage(driver)
                 .goToResourcesPage()
                 .searchFor(SEARCH_ARG)
